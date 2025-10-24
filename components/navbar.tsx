@@ -23,7 +23,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="border-b bg-background">
+    <nav className="border-b bg-background" id="navbar">
       <div className="flex h-16 items-center px-6 max-w-7xl mx-auto">
         {/* Logo on the left */}
         <Link href="/" className="flex items-center space-x-2">

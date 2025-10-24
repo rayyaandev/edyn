@@ -23,7 +23,6 @@ import Link from "next/link";
 import { Check, X } from "lucide-react";
 
 type FormErrors = {
-  name?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -65,15 +64,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     allValues?: Record<string, string>
   ) => {
     switch (name) {
-      case "name":
-        if (!value.trim()) {
-          return "Full name is required";
-        }
-        if (value.trim().length < 2) {
-          return "Name must be at least 2 characters";
-        }
-        return "";
-
       case "email":
         if (!value.trim()) {
           return "Email is required";
@@ -120,8 +110,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     const form = e.target.form;
     const allValues = form
       ? {
-          name:
-            (form.elements.namedItem("name") as HTMLInputElement)?.value || "",
           email:
             (form.elements.namedItem("email") as HTMLInputElement)?.value || "",
           password:
@@ -150,9 +138,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       const form = e.target.form;
       const allValues = form
         ? {
-            name:
-              (form.elements.namedItem("name") as HTMLInputElement)?.value ||
-              "",
             email:
               (form.elements.namedItem("email") as HTMLInputElement)?.value ||
               "",
@@ -189,7 +174,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
     const form = e.currentTarget;
     const formData = {
-      name: (form.elements.namedItem("name") as HTMLInputElement)?.value || "",
       email:
         (form.elements.namedItem("email") as HTMLInputElement)?.value || "",
       password:
@@ -201,7 +185,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
     // Validate all fields
     const newErrors: FormErrors = {
-      name: validateField("name", formData.name),
       email: validateField("email", formData.email),
       password: validateField("password", formData.password),
       confirmPassword: validateField(
@@ -213,7 +196,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
     setErrors(newErrors);
     setTouched({
-      name: true,
       email: true,
       password: true,
       confirmPassword: true,
@@ -236,11 +218,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            name: formData.name,
-          },
-        },
       });
 
       if (authError) {
@@ -258,7 +235,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         .from("user_profiles")
         .insert({
           id: authData.user.id,
-          name: formData.name,
           email: formData.email,
           created_at: new Date().toISOString(),
         });
@@ -294,22 +270,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       <CardContent>
         <form onSubmit={handleSubmit}>
           <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="name">Full Name</FieldLabel>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="John Doe"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                aria-invalid={touched.name && !!errors.name}
-                disabled={isLoading}
-              />
-              {touched.name && errors.name && (
-                <FieldError>{errors.name}</FieldError>
-              )}
-            </Field>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input

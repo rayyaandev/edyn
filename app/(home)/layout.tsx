@@ -7,11 +7,5 @@ export default function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <>
-      <Navbar />
-      <main className="">{children}</main>
-      <Footer />
-    </>
-  );
+  return <main className="">{children}</main>;
 }
