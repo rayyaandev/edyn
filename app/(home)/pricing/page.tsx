@@ -66,58 +66,13 @@ export default function PricingPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen py-12 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">Choose Your Plan</h1>
-            <p className="text-muted-foreground text-lg">
-              Select the perfect plan for your needs. Upgrade or downgrade at
-              any time.
-            </p>
-          </div>
+      <main className="min-h-[50vh] pt-10">
+        <stripe-pricing-table
+          pricing-table-id="prctbl_1SLo5RJz2vxEhtx97hKbnteF"
+          publishable-key="pk_test_51SLVKQJz2vxEhtx9N3S6iigjztiYxi6pv5DunQU9EwAAobeJiq6ekT0LaM1f2LSAMIBqXwl1jGJi7yo3m2WYk0VM00y0uHrT5f"
+        ></stripe-pricing-table>
+      </main>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-            {plans.map((plan) => (
-              <Card
-                key={plan.name}
-                className={plan.highlighted ? "border-primary shadow-lg" : ""}
-              >
-                <CardHeader>
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <CardDescription>{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold">{plan.price}</span>
-                      <span className="text-muted-foreground">
-                        {plan.period}
-                      </span>
-                    </div>
-                  </div>
-
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    className="w-full"
-                    variant={plan.highlighted ? "default" : "outline"}
-                  >
-                    {plan.highlighted ? "Get Started" : "Choose Plan"}
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
       <Footer />
     </>
   );
