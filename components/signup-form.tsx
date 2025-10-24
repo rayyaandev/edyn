@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -224,31 +225,54 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       return;
     }
 
-    // Form is valid, submit to API
+    // Form is valid, submit to Supabase
     setIsLoading(true);
     setErrors({}); // Clear any previous errors
 
     try {
-      const response = await fetch("/api/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const supabase = createSupabaseBrowserClient();
+
+      // Sign up the user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.name,
+          },
         },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setErrors({ general: data.error || "Failed to create account" });
+      if (authError) {
+        setErrors({ general: authError.message });
         return;
       }
 
-      // Success! Redirect to onboarding or home
+      if (!authData.user) {
+        setErrors({ general: "Failed to create account" });
+        return;
+      }
+
+      // Create user profile in user_profiles table
+      const { error: profileError } = await supabase
+        .from("user_profiles")
+        .insert({
+          id: authData.user.id,
+          name: formData.name,
+          email: formData.email,
+          created_at: new Date().toISOString(),
+        });
+
+      if (profileError) {
+        console.error("Profile creation error:", profileError);
+        setErrors({
+          general:
+            "Account created but profile setup failed. Please contact support.",
+        });
+        return;
+      }
+
+      // Success! Redirect to home (user is automatically logged in)
       router.push("/login");
       router.refresh();
     } catch (error) {
