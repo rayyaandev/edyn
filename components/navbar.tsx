@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useUser } from "@/components/providers/user-provider";
 
 export function Navbar() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const user = useUser();
 
   const signOut = async () => {
     setLoading(true);
@@ -40,10 +42,10 @@ export function Navbar() {
               Home
             </Link>
             <Link
-              href="/onboarding"
+              href={`/chat/${user?.planName.toLowerCase().replace(" ", "-")}`}
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Onboarding
+              Chat
             </Link>
             <Link
               href="/pricing"
