@@ -43,37 +43,19 @@ export function Onboard() {
     setIsLoading(true);
 
     try {
-      const supabase = createSupabaseBrowserClient();
+      const response = await fetch("/api/onboard-user", {
+        method: "POST",
+        body: JSON.stringify({ name: name.trim() }),
+      });
 
-      // Get the current user
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        setError("User not found. Please log in again.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.error);
         return;
       }
 
-      // Update the user profile with name and has_onboarded
-      const { error: updateError } = await supabase
-        .from("user_profiles")
-        .update({
-          name: name.trim(),
-          has_onboarded: true,
-        })
-        .eq("id", user.id);
-
-      if (updateError) {
-        console.error("Error updating profile:", updateError);
-        setError("Failed to update profile. Please try again.");
-        return;
-      }
-
-      // Navigate to home page - this will re-fetch the server component
-      // and show the welcome screen since has_onboarded is now true
-      router.push("/");
-      router.refresh();
+      // Navigate to home page
+      router.push("/pricing");
     } catch (error) {
       console.error("Onboarding error:", error);
       setError("An unexpected error occurred. Please try again.");
