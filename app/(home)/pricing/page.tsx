@@ -23,13 +23,21 @@ export default async function PricingPage() {
     redirect("/login");
   }
 
+  const stripePricingTableId = process.env.STRIPE_PRICING_TABLE_ID;
+  const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
+  if (!stripePricingTableId || !stripePublishableKey) {
+    throw new Error(
+      "STRIPE_PRICING_TABLE_ID or STRIPE_PUBLISHABLE_KEY is not set"
+    );
+  }
+
   return (
     <>
       <Navbar />
       <main className="min-h-[50vh] pt-10">
         <stripe-pricing-table
-          pricing-table-id="prctbl_1SLo5RJz2vxEhtx97hKbnteF"
-          publishable-key="pk_test_51SLVKQJz2vxEhtx9N3S6iigjztiYxi6pv5DunQU9EwAAobeJiq6ekT0LaM1f2LSAMIBqXwl1jGJi7yo3m2WYk0VM00y0uHrT5f"
+          pricing-table-id={stripePricingTableId}
+          publishable-key={stripePublishableKey}
           customer-session-client-secret={stripeCheckoutSession}
           client-reference-id={data.user.id}
         ></stripe-pricing-table>
