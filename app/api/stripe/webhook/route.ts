@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { headers } from "next/headers";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getPlanName } from "@/lib/stripe-helpers";
 
 const stripeSecret = process.env.STRIPE_SECRET;
 if (!stripeSecret) {
@@ -41,12 +42,7 @@ export async function POST(req: Request) {
       }
 
       // Get plan name from subscription
-      const subscription = await stripe.subscriptions.retrieve(
-        subscriptionId as string
-      );
-      const productId = subscription.items.data[0].plan.product as string;
-      const product = await stripe.products.retrieve(productId);
-      const planName = product.name;
+      const planName = await getPlanName(subscriptionId as string);
 
       // Update user profile with subscription id and stripe customer id
       const { error } = await supabase

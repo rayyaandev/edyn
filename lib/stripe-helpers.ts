@@ -48,3 +48,15 @@ export async function createCheckoutSession() {
   });
   return customerSession.client_secret;
 }
+
+export async function getSubscription(subscriptionId: string) {
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  return subscription;
+}
+
+export async function getPlanName(subscriptionId: string) {
+  const subscription = await getSubscription(subscriptionId);
+  const productId = subscription.items.data[0].plan.product as string;
+  const product = await stripe.products.retrieve(productId);
+  return product.name;
+}
