@@ -40,11 +40,20 @@ export async function POST(req: Request) {
         return new Response("User profile not found", { status: 400 });
       }
 
+      // Get plan name from subscription
+      const subscription = await stripe.subscriptions.retrieve(
+        subscriptionId as string
+      );
+      const productId = subscription.items.data[0].plan.product as string;
+      const product = await stripe.products.retrieve(productId);
+      const planName = product.name;
+
       // Update user profile with subscription id and stripe customer id
       const { error } = await supabase
         .from("user_profiles")
         .update({
           subscription_id: subscriptionId,
+          plan_name: planName,
         })
         .eq("stripe_customer_id", customerId);
 
