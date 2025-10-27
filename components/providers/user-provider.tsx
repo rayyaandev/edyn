@@ -7,6 +7,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 interface IUser extends User {
   planName: string;
+  name: string;
+  userEmail: string;
 }
 
 const UserContext = createContext<IUser | null>(null);
@@ -44,7 +46,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        setUser({ ...data.user, planName: userProfile.plan_name });
+        setUser({
+          ...data.user,
+          planName: userProfile.plan_name,
+          name: userProfile.name || "User",
+          userEmail: userProfile.email || data.user.email || "",
+        });
       } catch (error) {
         console.error("Error getting user:", error);
         router.push("/login");
