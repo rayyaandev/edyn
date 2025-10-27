@@ -53,6 +53,12 @@ export function Navbar() {
             >
               Pricing
             </Link>
+            <Link
+              href="/profile"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
+              Profile
+            </Link>
           </div>
         </div>
 

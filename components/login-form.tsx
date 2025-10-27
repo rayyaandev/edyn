@@ -113,7 +113,7 @@ export function LoginForm({
     try {
       const supabase = createSupabaseBrowserClient();
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
@@ -123,9 +123,27 @@ export function LoginForm({
         return;
       }
 
-      // Success! Redirect to home or dashboard
-      router.push("/");
-      router.refresh();
+      // Get user profile
+      const { data: userProfile } = await supabase
+        .from("user_profiles")
+        .select()
+        .eq("id", authData?.user?.id)
+        .single();
+
+      if (!userProfile) {
+        setErrors({ general: "User profile not found" });
+        return;
+      }
+
+      // If user does not have a subscription, redirect to pricing page
+      if (!userProfile.subscription_id) {
+        router.push("/pricing");
+        return;
+      }
+
+      // Redirect to chat page
+      const planName = userProfile.plan_name.toLowerCase().replace(" ", "-");
+      router.push(`/chat/${planName}`);
     } catch (error) {
       console.error("Login error:", error);
       setErrors({ general: "An unexpected error occurred. Please try again." });
