@@ -4,8 +4,15 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, User, CreditCard, LogOut } from "lucide-react";
 import { useUser } from "@/components/providers/user-provider";
+import { UserAvatar } from "@/components/user-avatar";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export function Navbar() {
   const router = useRouter();
@@ -53,27 +60,53 @@ export function Navbar() {
             >
               Pricing
             </Link>
-            <Link
-              href="/profile"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Profile
-            </Link>
           </div>
         </div>
 
-        {/* Logout button on the right */}
+        {/* User avatar dropdown on the right */}
         <div className="flex items-center">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={loading}
-            onClick={async () => {
-              await signOut();
-            }}
+          <DropdownMenu
+            trigger={
+              <div className="hover:opacity-80 transition-opacity">
+                <UserAvatar />
+              </div>
+            }
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Logout"}
-          </Button>
+            <DropdownMenuLabel>
+              {user?.name || "User"}
+              <div className="text-xs font-normal text-muted-foreground mt-0.5">
+                {user?.userEmail}
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push("/profile")}>
+              <User className="w-4 h-4 mr-2" />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/pricing")}>
+              <CreditCard className="w-4 h-4 mr-2" />
+              Upgrade
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={async () => {
+                await signOut();
+              }}
+              className="text-destructive focus:text-destructive"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Logging out...
+                </>
+              ) : (
+                <>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </>
+              )}
+            </DropdownMenuItem>
+          </DropdownMenu>
         </div>
       </div>
     </nav>

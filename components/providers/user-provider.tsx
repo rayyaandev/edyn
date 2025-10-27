@@ -9,6 +9,7 @@ interface IUser extends User {
   planName: string;
   name: string;
   userEmail: string;
+  avatar?: string;
 }
 
 const UserContext = createContext<IUser | null>(null);
@@ -51,6 +52,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           planName: userProfile.plan_name,
           name: userProfile.name || "User",
           userEmail: userProfile.email || data.user.email || "",
+          avatar: userProfile.avatar,
         });
       } catch (error) {
         console.error("Error getting user:", error);
