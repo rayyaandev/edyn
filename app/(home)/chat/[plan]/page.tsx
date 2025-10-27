@@ -28,9 +28,9 @@ export default async function ChatPage({
 
   // Redirect to the correct plan if the user is not on the correct plan
   const userPlanName = userProfile.plan_name.toLowerCase().replace(" ", "-");
-  // if (userPlanName !== params.plan) {
-  //   redirect(`/chat/${userPlanName}`);
-  // }
+  if (userPlanName !== plan) {
+    redirect(`/chat/${userPlanName}`);
+  }
 
   const subscription = await getSubscription(userProfile.subscription_id);
   console.log(subscription.status, subscription.trial_end);
